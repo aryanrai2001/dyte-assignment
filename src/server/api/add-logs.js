@@ -3,6 +3,7 @@ const faunadb = require("faunadb");
 const query = faunadb.query;
 
 const client = new faunadb.Client({
+    // This is the secret key for my fauna database
     secret: "fnAFS-R60qAAQkavstCU0Ap6ETjqITSCGxU87nHh",
     domain: "db.us.fauna.com",
 });

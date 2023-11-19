@@ -1,15 +1,28 @@
 const faunadb = require("faunadb");
+const json = require("faunadb/src/_json");
 
 const query = faunadb.query;
 
 const client = new faunadb.Client({
+    // This is the secret key for my fauna database
     secret: "fnAFS-R60qAAQkavstCU0Ap6ETjqITSCGxU87nHh",
     domain: "db.us.fauna.com",
 });
 
 module.exports = async (req, res) => {
-    const reqdata = req.body;
+    const after = JSON.stringify({ after: req.body.after });
+    let reqdata = req.body.data;
+    if (reqdata === undefined) {
+        res.status(400).json({ error: "incorrect query format" });
+        return;
+    }
     let message = reqdata.message;
+    // Maximum Number of logs fetched in one query
+    const page_size = 1000;
+    var after_cursor = undefined;
+    if (after !== undefined) {
+        after_cursor = json.parseJSON(after).after;
+    }
     if (message === undefined) message = "";
     try {
         const dbs = await client.query(
@@ -55,10 +68,10 @@ module.exports = async (req, res) => {
 
                             // Call Fauna Function "filterBy" for metadata.parentResourceId parameter
                             query.Call(query.Function("filterBy"), [
-                                reqdata.metadata?.parentResourceId !==
+                                reqdata["metadata.parentResourceId"] !==
                                     undefined,
                                 "parentresid",
-                                reqdata.metadata?.parentResourceId,
+                                reqdata["metadata.parentResourceId"],
                             ]),
 
                             // Filters by timestamp or the duration [timestart, timeend]
@@ -99,8 +112,8 @@ module.exports = async (req, res) => {
                             )
                         ),
                         {
-                            // Number of logs shown in each page
-                            size: 3,
+                            size: page_size,
+                            after: after_cursor,
                         }
                     ),
                     query.Lambda(
@@ -119,13 +132,13 @@ module.exports = async (req, res) => {
                 query.Lambda("ref", query.Get(query.Var("ref")))
             )
         );
-        const data = dbs.data;
 
         // Reformat timestamp from seconds to ISO String
-        data.forEach((log) => {
+        dbs.data.forEach((log) => {
             log.data.timestamp = new Date(log.data.timestamp).toISOString();
         });
-        res.status(200).json(data);
+
+        res.status(200).json(dbs);
     } catch (e) {
         console.log(e);
         res.status(500).json({ error: e.message });
