@@ -1,4 +1,3 @@
-
 <a name="readme-top"></a>
 
 [![LinkedIn][linkedin-shield]][linkedin-url]
@@ -36,6 +35,8 @@
 ## About The Project
 
 A log ingestor system that can efficiently handle vast volumes of log data, and offer a simple interface for querying this data using full-text search or specific field filters.
+
+![Query Interface](images/Capture.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

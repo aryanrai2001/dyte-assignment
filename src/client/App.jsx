@@ -89,7 +89,7 @@ const App = () => {
 
     return (
         <div id="App">
-            <h1 className="title">Dyte Log Explorer</h1>
+            <h1 className="title">Log Explorer</h1>
             <div className="search-bar">
                 <SearchBar
                     handleQuery={handleQuery}
