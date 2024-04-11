@@ -8,7 +8,7 @@
     "build": "vite build"
   },
   "dependencies": {
-    "express": "^4.18.2",
+    "express": "^4.19.2",
     "faunadb": "^4.8.0",
     "live-server": "^1.2.2",
     "react": "^18.2.0",
